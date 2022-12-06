@@ -15,18 +15,18 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 	dlistint_t *tmp;
 	unsigned int p;
 
-	if (!head || *head == NULL)
+	if (*head == NULL)
 	{
 		return (-1);
 	}
 	saved_head = *head;
-	p = 0; /* get to node @ index */
+	p = 0;
 	while (p < index && *head != NULL)
 	{
-		*head = (*head)->next; /* the node to delete */
+		*head = (*head)->next;
 		p++;
 	}
-	if (p != index) /*index out of range */
+	if (p != index)
 	{
 		*head = saved_head;
 		return (-1);
@@ -35,7 +35,7 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 	{
 		tmp = (*head)->next;
 		free(*head);
-		*head = tmp; /* single node case */
+		*head = tmp;
 		if (tmp != NULL)
 		{
 			tmp->prev = NULL;
@@ -43,12 +43,11 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 	}
 	else
 	{
-		tmp = (*head)->next;
-		if (tmp != NULL) /*head's next */
-			tmp->prev = (*head)->prev;
-		(*head)->prev->next = tmp;
+		(*head)->prev->next = (*head)->next;
 		free(*head);
-		*head = saved_head; /* update head */
+		if ((*head)->next)
+			(*head)->next->prev = (*head)->prev;
+		*head = saved_head;
 	}
 	return (1);
 }
